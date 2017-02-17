@@ -1,0 +1,12 @@
+#ifndef GOOGLEAPPS_GLOBAL_H
+#define GOOGLEAPPS_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(GOOGLEAPPS_LIBRARY)
+#  define GOOGLEAPPSSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define GOOGLEAPPSSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // GOOGLEAPPS_GLOBAL_H
