@@ -18,18 +18,19 @@ enum class ExecMode : int {
     None,
     Upload,
     Download,
-    Delete
+    Delete,
+    Copy
 };
 
 bool upload(GoogleOAuth2 *oauth2, const QString &filename)
 {
     GoogleDrive api(oauth2);
     bool ok = false;
-    QJsonObject obj = GoogleDrive::waitReplyJson(api.filesCreate(filename), &ok);
+    QJsonObject obj = GoogleDrive::waitReplyJson(api.filesCreateMedia(QJsonObject() ,filename), &ok);
     if (ok == true) {
         //success
         QString id = obj.value("id").toString();
-        qInfo() << "SUCCESS id:" << id;
+        qInfo() << "id:" << id;
     }
     return ok;
 }
@@ -37,10 +38,9 @@ bool upload(GoogleOAuth2 *oauth2, const QString &filename)
 bool download(GoogleOAuth2 *oauth2, const QString &id)
 {
     GoogleDrive api(oauth2);
-    QByteArray buffer = GoogleDrive::waitReplyRAW(api.filesGet(id, GoogleDrive::FilesGetTarget::Content));
+    QByteArray buffer = GoogleDrive::waitReplyRAW(api.filesGetMedia(id));
     if (buffer.size() > 0) {
         std::cout.write(buffer.data(), buffer.size());
-        qInfo() << "SUCCESS";
         return true;
     }
     return false;
@@ -52,10 +52,25 @@ bool deleteResource(GoogleOAuth2 *oauth2, const QString &id)
     QJsonObject obj = GoogleDrive::waitReplyJson(api.filesDelete(id));
     //filesDelete returns NULL if success
     if (obj.isEmpty()) {
-        qInfo() << "SUCCESS";
         return true;
     }
     return false;
+}
+
+bool copy(GoogleOAuth2 *oauth2, const QString &id)
+{
+    GoogleDrive api(oauth2);
+    bool ok = false;
+    QJsonObject resource;
+    resource.insert(QStringLiteral("name"), QString("Copy of %1").arg(id));
+    QJsonObject obj = GoogleDrive::waitReplyJson(api.filesCopy(id, resource), &ok);
+    if (ok == true) {
+        //success
+        qInfo() << obj;
+        QString id = obj.value("id").toString();
+        qInfo() << "id:" << id;
+    }
+    return ok;
 }
 
 int main(int argc, char *argv[])
@@ -72,9 +87,11 @@ int main(int argc, char *argv[])
     QCommandLineOption uploadOption(QStringList() << "u" << "upload", "upload <file>", "file");
     QCommandLineOption downloadOption(QStringList() << "d" << "download", "download <id>", "id");
     QCommandLineOption deleteOption(QStringList() << "delete", "delete <id>", "id");
+    QCommandLineOption copyOption(QStringList() << "copy", "copy <id>", "id");
     parser.addOption(uploadOption);
     parser.addOption(downloadOption);
     parser.addOption(deleteOption);
+    parser.addOption(copyOption);
     parser.process(app);
 
     ExecMode execMode = ExecMode::None;
@@ -82,12 +99,15 @@ int main(int argc, char *argv[])
     if (parser.isSet(uploadOption)) {
         execMode = ExecMode::Upload;
         target = parser.value(uploadOption);
-    } else if (parser.isSet(deleteOption)) {
-        execMode = ExecMode::Delete;
-        target = parser.value(deleteOption);
     } else if (parser.isSet(downloadOption)) {
         execMode = ExecMode::Download;
         target = parser.value(downloadOption);
+    } else if (parser.isSet(deleteOption)) {
+        execMode = ExecMode::Delete;
+        target = parser.value(deleteOption);
+    } else if (parser.isSet(copyOption)) {
+        execMode = ExecMode::Copy;
+        target = parser.value(copyOption);
     } else {
         parser.showHelp(1);
     }
@@ -130,6 +150,9 @@ int main(int argc, char *argv[])
         case ExecMode::Delete:
             ok = deleteResource(oauth2, target);
             break;
+        case ExecMode::Copy:
+            ok = copy(oauth2, target);
+            break;
         default:
             ok = false;
         }
@@ -139,5 +162,6 @@ int main(int argc, char *argv[])
         qInfo() << "FAILED";
         return 1;
     }
+    qInfo() << "SUCCESS";
     return 0;
 }

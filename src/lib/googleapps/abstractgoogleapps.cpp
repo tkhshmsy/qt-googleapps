@@ -176,6 +176,21 @@ QNetworkReply *AbstractGoogleApps::deleteResource(const QNetworkRequest &request
     return d->oauth2->networkAccessManager()->deleteResource(request);
 }
 
+QNetworkReply *AbstractGoogleApps::patch(const QNetworkRequest &request, QIODevice *data)
+{
+    return this->sendCustomRequest(request, QByteArray("PATCH"), data);
+}
+
+QNetworkReply *AbstractGoogleApps::patch(const QNetworkRequest &request, const QByteArray &data)
+{
+    return this->sendCustomRequest(request, QByteArray("PATCH"), data);
+}
+
+QNetworkReply *AbstractGoogleApps::patch(const QNetworkRequest &request, QHttpMultiPart *multiPart)
+{
+    return this->sendCustomRequest(request, QByteArray("PATCH"), multiPart);
+}
+
 QNetworkReply *AbstractGoogleApps::sendCustomRequest(const QNetworkRequest &request, const QByteArray &verb, QIODevice *data)
 {
     if (!d->oauth2->checkAndUpdateTokens()) {

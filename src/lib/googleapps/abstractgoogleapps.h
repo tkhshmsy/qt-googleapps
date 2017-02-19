@@ -42,7 +42,9 @@ protected:
     QNetworkReply *put(const QNetworkRequest &request, const QByteArray &data);
     QNetworkReply *put(const QNetworkRequest &request, QHttpMultiPart *multiPart);
     QNetworkReply *deleteResource(const QNetworkRequest &request);
-    //TODO: PATCH i/f
+    QNetworkReply *patch(const QNetworkRequest &request, QIODevice *data);
+    QNetworkReply *patch(const QNetworkRequest &request, const QByteArray &data);
+    QNetworkReply *patch(const QNetworkRequest &request, QHttpMultiPart *multiPart);
 
     QNetworkReply *sendCustomRequest(const QNetworkRequest &request, const QByteArray &verb, QIODevice *data = Q_NULLPTR);
     QNetworkReply *sendCustomRequest(const QNetworkRequest &request, const QByteArray &verb, const QByteArray &data);

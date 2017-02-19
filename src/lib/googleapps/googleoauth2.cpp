@@ -416,7 +416,7 @@ void GoogleOAuth2::refreshAccessToken()
 QUrl GoogleOAuth2::buildAuthenticateUrl(const QVariantMap &parameters)
 {
     if (this->state().isEmpty()) {
-        QString randomState(this->generateRandomString(8));
+        QString randomState(QString::fromLatin1(this->generateRandomString(8)));
         this->setState(randomState);
     }
     const QString state = this->state();
