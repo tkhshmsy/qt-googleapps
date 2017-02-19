@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = googledrivectl
+SUBDIRS = googledrivectl googlecalendarctl

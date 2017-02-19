@@ -310,7 +310,9 @@ QNetworkRequest GoogleOAuth2::createRequest(const QUrl &url, const QVariantMap &
 {
     QUrlQuery query(url.query());
     for (auto it = parameters.begin(), end = parameters.end(); it != end; ++it) {
-        query.addQueryItem(it.key(), it.value().toString());
+        QString key = QString::fromLatin1(QUrl::toPercentEncoding(it.key()));
+        QString value = QString::fromLatin1(QUrl::toPercentEncoding(it.value().toString()));
+        query.addQueryItem(key, value);
     }
 
     QUrl u(url);

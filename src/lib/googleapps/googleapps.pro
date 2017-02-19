@@ -20,10 +20,12 @@ CONFIG -= create_cmake
 SOURCES += \
     googleoauth2.cpp \
     abstractgoogleapps.cpp \
-    googledrive.cpp
+    googledrive.cpp \
+    googlecalendar.cpp
 
 HEADERS += \
     googleapps_global.h \
     googleoauth2.h \
     abstractgoogleapps.h \
-    googledrive.h
+    googledrive.h \
+    googlecalendar.h

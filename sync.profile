@@ -7,6 +7,7 @@
     "googleoauth2.h" => "GoogleOAuth2",
     "abstractgoogleapps.h" => "AbstractGoogleApps",
     "googledrive.h" => "GoogleDrive",
+    "googlecalendar.h" => "GoogleCalendar"
 );
 %dependencies = (
     "qtbase" => "",
